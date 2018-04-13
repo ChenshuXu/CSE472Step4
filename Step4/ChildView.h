@@ -4,11 +4,11 @@
 
 
 #pragma once
-
+#include "ShaderWnd\ShaderWnd.h"
 
 // CChildView window
 
-class CChildView : public CWnd
+class CChildView : public CShaderWnd
 {
 // Construction
 public:
@@ -30,7 +30,11 @@ public:
 
 	// Generated message map functions
 protected:
-	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
+
+public:
+	virtual void RenderGL();
+	virtual void InitGL();
+	virtual void CleanGL();
 };
 

@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "Step4.h"
 #include "ChildView.h"
+#include "ShaderWnd\ShaderWnd.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,7 +23,7 @@ CChildView::~CChildView()
 }
 
 
-BEGIN_MESSAGE_MAP(CChildView, CWnd)
+BEGIN_MESSAGE_MAP(CChildView, CShaderWnd)
 	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
@@ -32,7 +33,7 @@ END_MESSAGE_MAP()
 
 BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs) 
 {
-	if (!CWnd::PreCreateWindow(cs))
+	if (!CShaderWnd::PreCreateWindow(cs))
 		return FALSE;
 
 	cs.dwExStyle |= WS_EX_CLIENTEDGE;
@@ -43,12 +44,22 @@ BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs)
 	return TRUE;
 }
 
-void CChildView::OnPaint() 
+void CChildView::InitGL()
 {
-	CPaintDC dc(this); // device context for painting
-	
-	// TODO: Add your message handler code here
-	
-	// Do not call CWnd::OnPaint() for painting messages
+	glClearColor(1.f, 1.f, 1.f, 1.f);
+	glEnable(GL_DEPTH_TEST);
+	glShadeModel(GL_SMOOTH);
+
+}
+
+void CChildView::RenderGL()
+{
+	// Clear the screen
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void CChildView::CleanGL()
+{
+
 }
 
