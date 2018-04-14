@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "Step4.h"
 #include "ChildView.h"
-#include "ShaderWnd\ShaderWnd.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -50,12 +49,59 @@ void CChildView::InitGL()
 	glEnable(GL_DEPTH_TEST);
 	glShadeModel(GL_SMOOTH);
 
+	/*
+	initialize the mesh
+	*/
+	m_fishtex.LoadFile(L"models/BLUEGILL.BMP");
+
+	m_fish.LoadOBJ("models\\fish4.obj");
+	m_fish.m_program = LoadShaders("ShaderWnd/vertex.glsl", "ShaderWnd/fragment.glsl");
+	m_fish.InitGL();
 }
 
 void CChildView::RenderGL()
 {
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	/*
+	Actual rendering takes
+	*/
+	m_program = m_fish.m_program;
+	glUseProgram(m_program);
+
+	glUniform1i(glGetUniformLocation(m_program, "diffuse_mat"), 0);
+
+	m_nPVM = glGetUniformLocation(m_program, "mPVM");
+	m_nVM = glGetUniformLocation(m_program, "mVM");
+
+	glUniformMatrix4fv(m_nPVM, 1, GL_FALSE, value_ptr(m_mPVM));
+	glUniformMatrix4fv(m_nVM, 1, GL_FALSE, value_ptr(m_mVM));
+
+	glm::vec4 light_position(-5.f, 5.f, -5.f, 0.f);
+	glm::vec4 light_ambient(0.2f, 0.2f, 0.2f, 1.f);
+	glm::vec4 light_diffuse(1.f, 1.f, 1.f, 1.f);
+	glm::vec4 light_specular(1.f, 1.f, 1.f, 1.f);
+
+	glm::vec4 material_ambient(1.f, 1.f, 1.f, 1.f);
+	glm::vec4 material_diffuse(1.f, 1.f, 1.f, 1.f);
+	glm::vec4 material_specular(1.f, 1.f, 1.f, 1.f);
+	float material_shininess = 100.0f;
+
+	glm::vec4 ambient_product = light_ambient*material_ambient;
+	glm::vec4 diffuse_product = light_diffuse*material_diffuse;
+	glm::vec4 specular_product = light_specular*material_specular;
+
+	glUniform4fv(glGetUniformLocation(m_program, "AmbientProduct"), 1, value_ptr(ambient_product));
+	glUniform4fv(glGetUniformLocation(m_program, "DiffuseProduct"), 1, value_ptr(diffuse_product));
+	glUniform4fv(glGetUniformLocation(m_program, "SpecularProduct"), 1, value_ptr(specular_product));
+	glUniform4fv(glGetUniformLocation(m_program, "LightPosition"), 1, value_ptr(light_position));
+	glUniform1f(glGetUniformLocation(m_program, "Shininess"), material_shininess);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_fishtex.TexName());
+
+	m_fish.RenderGL();
 }
 
 void CChildView::CleanGL()

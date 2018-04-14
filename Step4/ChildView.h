@@ -5,6 +5,11 @@
 
 #pragma once
 #include "ShaderWnd\ShaderWnd.h"
+#include "Mesh.h"
+#include "Sphere.h"
+#include "graphics\GrTexture.h"
+#include "graphics\GrCubeTexture.h"
+
 
 // CChildView window
 
@@ -36,5 +41,13 @@ public:
 	virtual void RenderGL();
 	virtual void InitGL();
 	virtual void CleanGL();
+private:
+	CGrTexture m_fishtex;
+	CGrTexture m_sphereTex;
+	CGrCubeTexture m_cubeTex;
+	CMesh m_fish;
+	CSphere m_sphere;
+	CSphere m_metallicSphere;
+	CMesh m_skybox;
 };
 
