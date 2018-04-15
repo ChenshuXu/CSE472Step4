@@ -241,7 +241,7 @@ void CChildView::RenderGL()
 	m_program = m_tori1.m_program;
 	glUseProgram(m_program);
 
-	glUniform1i(glGetUniformLocation(m_program, "diffuse_mat"), 0);
+	glUniform1i(glGetUniformLocation(m_program, "bump_map"), 0);
 
 	m_nPVM = glGetUniformLocation(m_program, "mPVM");
 	m_nVM = glGetUniformLocation(m_program, "mVM");
