@@ -49,5 +49,8 @@ private:
 	CSphere m_sphere;
 	CSphere m_metallicSphere;
 	CMesh m_skybox;
+
+	CGrTexture m_cattex;
+	CMesh m_cat;
 };
 
