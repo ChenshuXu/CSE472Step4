@@ -1,5 +1,7 @@
 #pragma once
-
+#include "ShaderWnd\ShaderWnd.h"
+#include "gl/gl.h"
+#include "graphics/GrTexture.h"
 //! This class allows you to draw a torus
 
 class CTorus
@@ -62,5 +64,21 @@ private:
 
     //! Number of steps in the small radius
     double  m_steps2;
+
+public:
+	GLuint m_program;
+	GLuint m_vao;
+	GLuint m_vertexVBO;
+	GLuint m_normalVBO;
+	GLuint m_texVBO;
+
+	void InitGL();
+	void RenderGL();
+	void CleanGL();
+
+private:
+	std::vector<glm::vec3> vertexArray;
+	std::vector<glm::vec3> normalArray;
+	std::vector<glm::vec2> texArray;
 };
 

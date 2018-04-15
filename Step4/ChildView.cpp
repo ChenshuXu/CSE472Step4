@@ -66,12 +66,19 @@ void CChildView::InitGL()
 	m_sphere.m_program = LoadShaders("ShaderWnd/vertexSphere.glsl", "ShaderWnd/fragmentSphere.glsl");
 	m_sphere.InitGL();
 
-	m_cubeTex.LoadFiles(L"textures/right.jpg", L"textures/left.jpg", L"textures/top.jpg",
-		L"textures/bottom.jpg", L"textures/front.jpg", L"textures/back.jpg");
+	/*
+	tori
+	*/
+	m_marble1.LoadFile(L"textures/marble03.bmp");
+	m_tori1.m_program = LoadShaders("ShaderWnd/vertexSphere.glsl", "ShaderWnd/fragmentSphere.glsl");
+	m_tori1.InitGL();
+
 
 	/*
 	skybox
 	*/
+	m_cubeTex.LoadFiles(L"textures/right.jpg", L"textures/left.jpg", L"textures/top.jpg",
+		L"textures/bottom.jpg", L"textures/front.jpg", L"textures/back.jpg");
 	m_skybox.CreateCube();
 	m_skybox.m_program = LoadShaders("ShaderWnd/vertexSky.glsl", "ShaderWnd/fragmentSky.glsl");
 	m_skybox.InitGL();
@@ -160,6 +167,8 @@ void CChildView::RenderGL()
 
 	m_sphere.RenderGL();
 
+
+
 	/*
 	skybox
 	*/
@@ -225,6 +234,28 @@ void CChildView::RenderGL()
 	glBindTexture(GL_TEXTURE_2D, m_cattex.TexName());
 
 	m_cat.RenderGL();
+
+	/*
+	tori
+	*/
+	m_program = m_tori1.m_program;
+	glUseProgram(m_program);
+
+	glUniform1i(glGetUniformLocation(m_program, "diffuse_mat"), 0);
+
+	m_nPVM = glGetUniformLocation(m_program, "mPVM");
+	m_nVM = glGetUniformLocation(m_program, "mVM");
+
+	M = translate(mat4(1.f), vec3(0., 0., 10.));
+	VM = m_mVM*M;
+	PVM = m_mPVM*M;
+
+	glUniformMatrix4fv(m_nPVM, 1, GL_FALSE, value_ptr(PVM));
+	glUniformMatrix4fv(m_nVM, 1, GL_FALSE, value_ptr(VM));
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_marble1.TexName());
+
+	m_tori1.RenderGL();
 
 }
 

@@ -9,6 +9,7 @@
 #include "Sphere.h"
 #include "graphics\GrTexture.h"
 #include "graphics\GrCubeTexture.h"
+#include "Torus.h"
 
 
 // CChildView window
@@ -50,7 +51,12 @@ private:
 	CSphere m_metallicSphere;
 	CMesh m_skybox;
 
+	// cat
 	CGrTexture m_cattex;
 	CMesh m_cat;
+
+	// three tori
+	CGrTexture m_marble1;
+	CTorus m_tori1;
 };
 

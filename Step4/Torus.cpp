@@ -65,29 +65,35 @@ void CTorus::Draw()
             // We need to know the corners
             double n[3], v[3];
 
-            glBegin(GL_QUADS);
-
 			TorusVertex(a1a, m_r1, a2a, m_r2, v, n);
-			glNormal3dv(n);
-			glTexCoord2d(a1a / (2 * GR_PI) * 10, a2a / (2 * GR_PI) * 2);
-			glVertex3dv(v);
+			normalArray.push_back(glm::vec3(n[0], n[1], n[2]));
+			texArray.push_back(glm::vec2(a1a / (2 * GR_PI) * 10, a2a / (2 * GR_PI) * 2));
+			vertexArray.push_back(glm::vec3(v[0], v[1], v[2]));
 
 			TorusVertex(a1b, m_r1, a2a, m_r2, v, n);
-			glNormal3dv(n);
-			glTexCoord2d(a1b / (2 * GR_PI) * 10, a2a / (2 * GR_PI) * 2);
-			glVertex3dv(v);
+			normalArray.push_back(glm::vec3(n[0], n[1], n[2]));
+			texArray.push_back(glm::vec2(a1b / (2 * GR_PI) * 10, a2a / (2 * GR_PI) * 2));
+			vertexArray.push_back(glm::vec3(v[0], v[1], v[2]));
 
 			TorusVertex(a1b, m_r1, a2b, m_r2, v, n);
-			glNormal3dv(n);
-			glTexCoord2d(a1b / (2 * GR_PI) * 10, a2b / (2 * GR_PI) * 2);
-			glVertex3dv(v);
+			normalArray.push_back(glm::vec3(n[0], n[1], n[2]));
+			texArray.push_back(glm::vec2(a1b / (2 * GR_PI) * 10, a2b / (2 * GR_PI) * 2));
+			vertexArray.push_back(glm::vec3(v[0], v[1], v[2]));
+
+			TorusVertex(a1a, m_r1, a2a, m_r2, v, n);
+			normalArray.push_back(glm::vec3(n[0], n[1], n[2]));
+			texArray.push_back(glm::vec2(a1a / (2 * GR_PI) * 10, a2a / (2 * GR_PI) * 2));
+			vertexArray.push_back(glm::vec3(v[0], v[1], v[2]));
+
+			TorusVertex(a1b, m_r1, a2b, m_r2, v, n);
+			normalArray.push_back(glm::vec3(n[0], n[1], n[2]));
+			texArray.push_back(glm::vec2(a1b / (2 * GR_PI) * 10, a2b / (2 * GR_PI) * 2));
+			vertexArray.push_back(glm::vec3(v[0], v[1], v[2]));
 
 			TorusVertex(a1a, m_r1, a2b, m_r2, v, n);
-			glNormal3dv(n);
-			glTexCoord2d(a1a / (2 * GR_PI) * 10, a2b / (2 * GR_PI) * 2);
-			glVertex3dv(v);
-
-			glEnd();
+			normalArray.push_back(glm::vec3(n[0], n[1], n[2]));
+			texArray.push_back(glm::vec2(a1a / (2 * GR_PI) * 10, a2b / (2 * GR_PI) * 2));
+			vertexArray.push_back(glm::vec3(v[0], v[1], v[2]));
 		}
     }
 }
@@ -128,4 +134,40 @@ void CTorus::TorusVertex(double a1, double r1, double a2, double r2,
     v[0] = centerx + r2 * n[0];
     v[1] = r2 * n[1];
     v[2] = centerz + r2 * n[2];
+}
+
+void CTorus::InitGL()
+{
+	Draw();
+
+	glGenVertexArrays(1, &m_vao);
+	glBindVertexArray(m_vao);
+
+	glGenBuffers(1, &m_vertexVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexVBO);
+	glBufferData(GL_ARRAY_BUFFER, vertexArray.size() * sizeof(glm::vec3),
+		&vertexArray[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	glGenBuffers(1, &m_normalVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_normalVBO);
+	glBufferData(GL_ARRAY_BUFFER, normalArray.size() * sizeof(glm::vec3),
+		&normalArray[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	glGenBuffers(1, &m_texVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_texVBO);
+	glBufferData(GL_ARRAY_BUFFER, texArray.size() * sizeof(glm::vec2),
+		&texArray[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+}
+
+void CTorus::RenderGL()
+{
+	glUseProgram(m_program);
+	glBindVertexArray(m_vao);
+	glDrawArrays(GL_TRIANGLES, 0, vertexArray.size());
 }
